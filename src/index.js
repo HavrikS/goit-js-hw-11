@@ -4,28 +4,38 @@ import SimpleLightbox from "simplelightbox";
 
 
 const form = document.querySelector('#search-form');
-const galleryImg = document.querySelector('.gallery')
+const galleryImg = document.querySelector('.gallery');
+const loadMore = document.querySelector('.load-more')
 
 form.addEventListener('submit', onSerch);
+loadMore.addEventListener('click', onLoadMore)
 
 let searchQuery = '';
+let pageNumber = 1;
 
 async function onSerch(e) {
     e.preventDefault();
     searchQuery = e.currentTarget.elements.searchQuery.value;
     const response = await getImages(searchQuery);
     renderGallery(response.data.hits);
+    loadMore.style.display = "block";
     // let gallery = new SimpleLightbox('.gallery a');
 }
 
 async function getImages(query) {
     try {
-        const response = await axios.get(`https://pixabay.com/api/?key=28062260-bbfec586ef8cfde1ee2834ccc&q=${query}&
-        page=2&per_page=40&image_type=photo&orientation=horizontal&safesearch=true`);
+        const response = await axios.get(`https://pixabay.com/api/?key=28062260-bbfec586ef8cfde1ee2834ccc&q=${query}&page=${pageNumber}&per_page=3&image_type=photo&orientation=horizontal&safesearch=true`);
+        pageNumber += 1;
+        console.log(pageNumber);
         return response;    
     } catch (error) {
     console.error(error);
     }
+}
+
+async function onLoadMore() {
+    const response = await getImages(searchQuery);
+    renderGallery(response.data.hits);
 }
 
 function renderGallery(images) {
