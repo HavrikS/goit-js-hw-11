@@ -1,5 +1,6 @@
 import './css/styles.css';
 import axios from 'axios';
+import Notiflix from 'notiflix';
 import SimpleLightbox from "simplelightbox";
 
 
@@ -12,19 +13,29 @@ loadMore.addEventListener('click', onLoadMore)
 
 let searchQuery = '';
 let pageNumber = 1;
+let totalPage = 1;
+let perPage = 40;
 
 async function onSerch(e) {
     e.preventDefault();
+    galleryImg.innerHTML = "";
+    pageNumber = 1;
+    loadMore.style.display = "none";
     searchQuery = e.currentTarget.elements.searchQuery.value;
     const response = await getImages(searchQuery);
-    renderGallery(response.data.hits);
-    loadMore.style.display = "block";
+    totalPage = Math.ceil(response.data.totalHits / perPage);    
+    if (response.data.hits.length > 0) {
+        Notiflix.Notify.success(`Hooray! We found ${response.data.totalHits} images.`);
+        renderGallery(response.data.hits);
+    } else {
+        Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+    }    
     // let gallery = new SimpleLightbox('.gallery a');
 }
 
 async function getImages(query) {
     try {
-        const response = await axios.get(`https://pixabay.com/api/?key=28062260-bbfec586ef8cfde1ee2834ccc&q=${query}&page=${pageNumber}&per_page=3&image_type=photo&orientation=horizontal&safesearch=true`);
+        const response = await axios.get(`https://pixabay.com/api/?key=28062260-bbfec586ef8cfde1ee2834ccc&q=${query}&page=${pageNumber}&per_page=${perPage}&image_type=photo&orientation=horizontal&safesearch=true`);
         pageNumber += 1;
         console.log(pageNumber);
         return response;    
@@ -34,17 +45,22 @@ async function getImages(query) {
 }
 
 async function onLoadMore() {
+    loadMore.style.display = "none";
     const response = await getImages(searchQuery);
     renderGallery(response.data.hits);
+    if (pageNumber > totalPage) {
+        loadMore.style.display = "none";
+        Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
+    }
 }
 
-function renderGallery(images) {
-    console.log(images);
+function renderGallery(images) {    
+    loadMore.style.display = "block";
     const markapUl = images
         .map((image) => {
     return `
     <div class="photo-card">
-        <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
+        <img  src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
     <div class="info">
         <p class="info-item">
             <b>Likes: ${image.likes}</b>
@@ -61,7 +77,7 @@ function renderGallery(images) {
         </div>
     </div>`;
     }).join("");
-galleryImg.innerHTML = markapUl
+galleryImg.insertAdjacentHTML('beforeend' , markapUl)
 }
 
 // function renderGallery(images) {
