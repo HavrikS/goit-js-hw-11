@@ -12,6 +12,14 @@ body {
     margin: 0 auto;   
 }
 
+button {
+    cursor: pointer;    
+    border-radius: 4px;
+    border: none;
+    width: 100px;
+    height: 20px;
+}
+
 
 .header {
     display: flex;   
@@ -20,10 +28,6 @@ body {
     justify-content: center;
     background-color: #2196f3;    
     padding: 8px 0;
-}
-
-.load-more {
-    
 }
 
 .container {
@@ -50,11 +54,16 @@ body {
     height: 245px
 }
 
-.photo-card > img {
+.gallery__image {
     display: block;
-    height: 80%;
+    height: 100%;
     width: 100%;
     object-fit: cover;
+}
+
+.gallery__link {
+    display: block;
+    height: 80%;
 }
 
 .info {
@@ -75,11 +84,16 @@ body {
 
 .load{
     height: 52px;
-    padding-top: 15px;
+    padding-top: 11px;
 }
 
 .load-more {
     display: none;
     margin: 0 auto;
     background-color: #188ce8;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    width: 150px;
+    height: 30px;
 }
