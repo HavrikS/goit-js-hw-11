@@ -51,6 +51,11 @@ async function onLoadMore() {
     const response = await getImages(searchQuery);
     renderGallery(response.data.hits);
     gallery.refresh()
+    const { height: cardHeight } = galleryImg.firstElementChild.getBoundingClientRect();
+    window.scrollBy({
+        top: cardHeight * 2,
+        behavior: "smooth",
+        });
     if (pageNumber > totalPage) {
         loadMore.style.display = "none";
         Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
